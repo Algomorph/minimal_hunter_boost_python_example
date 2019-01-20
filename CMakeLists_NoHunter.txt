@@ -1,0 +1,26 @@
+# CMake version, module path
+cmake_minimum_required (VERSION 3.4)
+#=================================================================
+# Project language configuration
+project(example LANGUAGES CXX)
+#=================================================================
+# Compiler options
+
+# Preliminaries for Compiler
+# C++11 standard simplifies things in a lot of obvious ways,
+# it also allows us to use Eigen in multithreaded code w/o special initialization
+set(CMAKE_CXX_STANDARD 11)
+#=================================================================
+
+set(PYTHON_VERSION_MAJOR 3)
+set(PYTHON_VERSION_MINOR 6)
+
+# Hunter package retrieval/building, package discovery
+find_package(PythonInterp 3 REQUIRED QUIET)
+find_package(PythonLibs 3 REQUIRED QUIET)
+find_package(Boost COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} REQUIRED QUIET)
+
+PYTHON_ADD_MODULE(module module.cpp)
+target_include_directories(module PUBLIC ${PYTHON_INCLUDE_DIRS})
+target_compile_definitions(module PUBLIC -DBOOST_ALL_NO_LIB)
+target_link_libraries(module Boost::python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} ${PYTHON_LIBRARIES})
